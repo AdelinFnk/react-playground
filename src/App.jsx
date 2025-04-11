@@ -3,7 +3,7 @@ import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
 
 function App(props) {
-  
+  console.log(props)
   const taskList = props.tasks?.map((task) => (
     <Todo 
       name={task.name}

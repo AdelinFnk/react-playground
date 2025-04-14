@@ -15,16 +15,39 @@ function App(props) {
       id={task.id}
       completed={task.completed}
       key={task.id}
+      toggleTaskCompleted={toggleTaskCompleted}
+      deleteTask={deleteTask}
     />
   ));
+  
+  function toggleTaskCompleted(id) {
+    const updatedTasks = tasks.map((task) => {
+      //if this has the same ID as the edited task
+      if (id === task.id) {
+        //use object spread to make a new object
+        //whose COMPLETED props has been inverted
+        return {...task, completed: !task.completed };
+      }
+      return task;
+    })
+    setTasks(updatedTasks);
+  }
+
+  function deleteTask(id) {
+    console.log(id);
+  }
+  
 
   function addTask(name) {
     //name is like name: name inside the obj
     //nanoid generates an unique string for each id with the prefix todo-
     const newTask = { name, id: `todo-${nanoid()}`, completed: false };
     setTasks([...tasks, newTask]);
-    console.log([...tasks, newTask])
   }
+
+  const tasksNoun = taskList.length !== 1 ? 'tasks' : 'task';
+  const headingText = `${taskList.length} ${tasksNoun} remainig`
+
 
   return (
     <div className="todoapp stack-large">
@@ -35,7 +58,7 @@ function App(props) {
         <FilterButton />
         <FilterButton />
       </div>
-      <h2 id="list-heading">3 tasks remaining</h2>
+      <h2 id="list-heading">{headingText}</h2>
       <ul
         role="list"
         className="todo-list stack-large stack-exception"

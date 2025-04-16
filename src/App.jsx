@@ -4,6 +4,14 @@ import FilterButton from "./components/FilterButton";
 import { useState } from "react";
 import { nanoid } from "nanoid";
 
+const FILTER_MAP = {
+  All: () => true,
+  Active: (task) => !task.completed,
+  Completed: (task) => task.completed,
+};
+
+const FILTER_NAMES = Object.keys(FILTER_MAP);
+
 
 function App(props) {
   
@@ -14,6 +22,19 @@ function App(props) {
     setTasks([...tasks, newTask]);
   }
 
+  function editTask(id, newName) {
+    const editedTaskList = tasks.map((task) => {
+      //if this task has the same ID as the edited task
+      if(id === task.id) {
+        //copy the task and uuupdate its name
+        return {...task, name: newName };
+      }
+      //return the original task if its not the edited task
+      return task;
+    })
+    setTasks(editedTaskList);
+
+  }
 
   function toggleTaskCompleted(id) {
     const updatedTasks = tasks.map((task) => {
@@ -34,22 +55,38 @@ function App(props) {
     setTasks(remainingTasks);
   }
 
-
+  const [filter, setFilter] = useState("All");
   const [tasks, setTasks] = useState(props.tasks);
-  const taskList = tasks?.map((task) => (
-    <Todo 
-    name={task.name}
+  
+  const taskList = tasks
+  .filter(FILTER_MAP[filter])
+  .map((task) => (
+    <Todo
+      name={task.name}
       id={task.id}
       completed={task.completed}
       key={task.id}
       toggleTaskCompleted={toggleTaskCompleted}
       deleteTask={deleteTask}
+      editTask={editTask}
+    />
+  ));
+
+
+  const filterList = FILTER_NAMES.map((name) => (
+    <FilterButton
+      key={name}
+      name={name}
+      isPressed={name === filter}
+      setFilter={setFilter}
     />
   ));
   
+  
 
   const tasksNoun = taskList.length !== 1 ? 'tasks' : 'task';
-  const headingText = `${taskList.length} ${tasksNoun} remainig`
+  const headingText = `${taskList.length} ${tasksNoun} remaining`
+  
 
 
   return (
@@ -57,9 +94,7 @@ function App(props) {
       <h1>TodoMatic</h1>
         <Form addTask={addTask} />
       <div className="filters btn-group stack-exception">
-        <FilterButton />
-        <FilterButton />
-        <FilterButton />
+        {filterList}
       </div>
       <h2 id="list-heading">{headingText}</h2>
       <ul

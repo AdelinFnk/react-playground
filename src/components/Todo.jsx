@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+
 
 function Todo(props) {
 
   const [isEditing, setEditing] = useState(false);
   const [newName, setNewName] = useState("");
-  
+  const editFieldRef = useRef(null);
+  const editButtonRef = useRef(null);
+  console.log(editButtonRef.current);
+
   function handleChange(e) {
     setNewName(e.target.value);
   }
@@ -28,6 +33,7 @@ function Todo(props) {
           type="text"
           value={newName}
           onChange={handleChange}
+          ref={editFieldRef}
         />
 
       </div>
@@ -62,6 +68,7 @@ function Todo(props) {
           type="button" 
           className="btn" 
           onClick={() => setEditing(true)}
+          ref={editButtonRef}
           >
           Edit <span className="visually-hidden">{props.name}</span>
         </button>
@@ -77,6 +84,11 @@ function Todo(props) {
     </div>
   );
   
+  useEffect(() => {
+    console.log("side effect");
+  });
+  console.log("main render");
+
   return <li className="todo">{isEditing ? editingTemplate : viewTemplate}</li>;
 
 }
